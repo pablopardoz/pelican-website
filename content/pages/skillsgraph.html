@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<script src="http://d3js.org/d3.v2.js?2.9.1"></script>
+<style>
+
+.link {
+  fill: none;
+  stroke: #666;
+  stroke-width: 1.5px;
+}
+
+.node circle {
+  fill: #ccc;
+  stroke: #fff;
+  stroke-width: 1.5px;
+}
+
+text {
+  font: 10px sans-serif;
+  pointer-events: none;
+}
+
+</style>
+<head>
+<title>skillsgraph</title>
+</head>
+<body>
+<script>
+
+// http://blog.thomsonreuters.com/index.php/mobile-patent-suits-graphic-of-the-day/
+var links = [
+  {source: "Geography", target: "Risk", type: "1"},
+  {source: "Geography", target: "Vulnerability", type: "1"},
+  {source: "Geography", target: "Cartography", type: "1"},
+  {source: "Geography", target: "GIS", type: "1"},
+  {source: "GIS", target: "OSM", type: "1"},
+  
+  {source: "GIS", target: "ArcGIS", type: "1"},
+  {source: "GIS", target: "QGIS", type: "1"},
+  {source: "GIS", target: "gvSIG", type: "1"},
+  {source: "GIS", target: "PostGIS", type: "1"},
+  {source: "Programming", target: "Databases", type: "1"},
+  {source: "Programming", target: "Arduino", type: "1"},
+  {source: "Arduino", target: "IOT", type: "1"},
+  {source: "Programming", target: "Python", type: "1"},
+  {source: "PostGIS", target: "PostgreSQL", type: "1"},
+  {source: "Databases", target: "PostgreSQL", type: "1"},
+  {source: "Databases", target: "Mongo", type: "1"},
+  {source: "Databases", target: "Oracle", type: "1"},
+  {source: "PostGIS", target: "SQL", type: "1"},
+  {source: "Programming", target: "Visual Studio", type: "1"},
+  {source: "Programming", target: "Xamarin", type: "1"},
+  {source: "Programming", target: "Netbeans", type: "1"},
+  {source: "Programming", target: "Android Studio", type: "1"},
+  {source: "Xamarin", target: ".NET", type: "1"},
+  {source: "Visual Studio", target: ".NET", type: "1"},
+  {source: "Android Studio", target: "Java", type: "1"},
+  {source: "Netbeans", target: "Java", type: "1"},
+  {source: ".NET", target: "C#", type: "1"},
+  {source: ".NET", target: "VB", type: "1"},
+  {source: ".NET", target: "XAML", type: "1"},
+  {source: "XAML", target: "Xamarin", type: "1"},
+  {source: "Java", target: "Swing", type: "1"},
+  {source: "Java", target: "Hibernate", type: "1"},
+   {source: "Java", target: "Android", type: "1"},
+    {source: "Android", target: "Android Studio", type: "1"},
+    {source: "Android", target: "Mobile", type: "1"},
+    {source: "Mobile", target: "Xamarin", type: "1"},
+    {source: "ArcGIS", target: "ArcPy", type: "1"},
+    {source: "QGIS", target: "PyQGIS", type: "1"},
+    {source: "ArcPy", target: "Python", type: "1"},
+    {source: "PyQGIS", target: "Python", type: "1"},
+    
+  {source: "Oracle", target: "SQL", type: "1"}
+  
+];
+
+var nodes = {};
+
+// Compute the distinct nodes from the links.
+links.forEach(function(link) {
+  link.source = nodes[link.source] || (nodes[link.source] = {name: link.source});
+  link.target = nodes[link.target] || (nodes[link.target] = {name: link.target});
+});
+
+var width = 1200,
+    height = 750;
+
+var force = d3.layout.force()
+    .nodes(d3.values(nodes))
+    .links(links)
+    .size([width, height])
+    .linkDistance(80)
+    .charge(-300)
+    .on("tick", tick)
+    .start();
+
+var svg = d3.select("body").append("svg")
+    .attr("width", width)
+    .attr("height", height);
+
+var link = svg.selectAll(".link")
+    .data(force.links())
+  .enter().append("line")
+    .attr("class", "link");
+
+var node = svg.selectAll(".node")
+    .data(force.nodes())
+  .enter().append("g")
+    .attr("class", "node")
+    .on("mouseover", mouseover)
+    .on("mouseout", mouseout)
+    .call(force.drag);
+
+node.append("circle")
+    .attr("r", 10);
+
+node.append("text")
+    .attr("x", 12)
+    .attr("dy", ".55em")
+    .text(function(d) { return d.name; });
+
+function tick() {
+  link
+      .attr("x1", function(d) { return d.source.x; })
+      .attr("y1", function(d) { return d.source.y; })
+      .attr("x2", function(d) { return d.target.x; })
+      .attr("y2", function(d) { return d.target.y; });
+
+  node
+      .attr("transform", function(d) { return "translate(" + d.x + "," + d.y + ")"; });
+}
+
+function mouseover() {
+  d3.select(this).select("circle").transition()
+      .duration(750)
+      .attr("r", 16);
+}
+
+function mouseout() {
+  d3.select(this).select("circle").transition()
+      .duration(750)
+      .attr("r", 8);
+}
+
+</script>
+</body>
