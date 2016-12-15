@@ -10,7 +10,7 @@ import sys
 sys.path.append(os.curdir)
 from pelicanconf import *
 
-SITEURL = 'vps347190.ovh.net'
+SITEURL = 'http://pablopardoes.s3-website-us-west-2.amazonaws.com/'
 RELATIVE_URLS = True
 
 FEED_ALL_ATOM = 'feeds/all.atom.xml'
